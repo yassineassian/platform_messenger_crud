@@ -1,0 +1,82 @@
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { Link, useParams } from "react-router-dom";
+
+
+function P() {
+
+
+
+
+
+    const [users, setUsers] = useState([]);
+
+    const { id } = useParams();
+    console.log(id)
+
+    useEffect(() => {
+        loadUsers();
+    }, []);
+
+    const loadUsers = async () => {
+        const result = await axios.get("http://localhost:8070/users");
+        let a = []
+        let k = 0
+        for (let i in result.data) {
+            if (result.data[i].id != id) {
+                a[k] = result.data[i]
+                k++
+            }
+        }
+
+
+        setUsers(a);
+    };
+
+    const deleteUser = async (id) => {
+        await axios.delete(`http://localhost:8070/user/${id}`);
+        loadUsers();
+    };
+
+    return (
+        <div className="container">
+            <div className="py-4">
+                <table className="table border shadow">
+                    <thead>
+                        <tr>
+                            <th scope="col">S.N</th>
+                            <th scope="col">Name</th>
+
+                            <th scope="col">Email</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {users.map((user, index) => (
+                            <tr>
+                                <th scope="row" key={index}>
+                                    {index + 1}
+                                </th>
+                                <td>{user.name}</td>
+
+                                <td>{user.email}</td>
+                                <td>
+                                    <Link
+                                        className="btn btn-primary mx-2"
+                                        to={`/m/${user.id}/${id}`}
+                                    >
+                                        Voire les Message
+                                    </Link>
+
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    );
+}
+
+
+export default P
